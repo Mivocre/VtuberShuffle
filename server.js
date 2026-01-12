@@ -33,6 +33,21 @@ db.serialize(() => {
     if (err) console.error(err);
     db.run(`INSERT OR IGNORE INTO users (username, password_hash) VALUES (?, ?)`, ['admin', hash]);
   });
+
+  // Insert sample songs if none exist
+  db.get(`SELECT COUNT(*) as count FROM songs`, [], (err, row) => {
+    if (err) console.error(err);
+    if (row.count === 0) {
+      const sampleSongs = [
+        { title: 'Sample Song 1', artist: 'Vtuber Artist 1', url: 'https://www.youtube.com/watch?v=6sAQ1wuYzxk' },
+        { title: 'Sample Song 2', artist: 'Vtuber Artist 2', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+        { title: 'Sample Song 3', artist: 'Vtuber Artist 3', url: 'https://www.youtube.com/watch?v=jNQXAC9IVRw' }
+      ];
+      sampleSongs.forEach(song => {
+        db.run(`INSERT INTO songs (title, artist, url) VALUES (?, ?, ?)`, [song.title, song.artist, song.url]);
+      });
+    }
+  });
 });
 
 // Middleware
@@ -83,20 +98,21 @@ app.post('/logout', (req, res) => {
   res.json({ success: true });
 });
 
-// API routes (protected)
+// Public API routes
+app.get('/api/songs', (req, res) => {
+  db.all(`SELECT * FROM songs`, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+// Protected API routes
 app.use('/api', (req, res, next) => {
   if (req.session.user) {
     next();
   } else {
     res.status(401).json({ error: 'Unauthorized' });
   }
-});
-
-app.get('/api/songs', (req, res) => {
-  db.all(`SELECT * FROM songs`, [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-  });
 });
 
 app.post('/api/songs', (req, res) => {
