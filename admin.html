@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Vtuber Shuffle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .logout {
+            float: right;
+            cursor: pointer;
+            color: #333;
+        }
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Panel <span class="logout" onclick="logout()">Logout</span></h1>
+
+    <div class="form-container">
+        <h2>Add New Song</h2>
+        <input type="text" id="title" placeholder="Title" required>
+        <input type="text" id="artist" placeholder="Artist" required>
+        <input type="text" id="url" placeholder="URL" required>
+        <button onclick="addSong()">Add Song</button>
+    </div>
+
+    <h2>Songs List</h2>
+    <table id="songsTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Artist</th>
+                <th>URL</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function loadSongs() {
+            const response = await fetch('/api/songs');
+            const songs = await response.json();
+            const tbody = document.querySelector('#songsTable tbody');
+            tbody.innerHTML = '';
+            songs.forEach(song => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${song.id}</td>
+                    <td><input type="text" value="${song.title}" onchange="updateSong(${song.id}, 'title', this.value)"></td>
+                    <td><input type="text" value="${song.artist}" onchange="updateSong(${song.id}, 'artist', this.value)"></td>
+                    <td><input type="text" value="${song.url}" onchange="updateSong(${song.id}, 'url', this.value)"></td>
+                    <td><button onclick="deleteSong(${song.id})">Delete</button></td>
+                `;
+            });
+        }
+
+        async function addSong() {
+            const title = document.getElementById('title').value;
+            const artist = document.getElementById('artist').value;
+            const url = document.getElementById('url').value;
+            await fetch('/api/songs', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, artist, url })
+            });
+            loadSongs();
+            document.getElementById('title').value = '';
+            document.getElementById('artist').value = '';
+            document.getElementById('url').value = '';
+        }
+
+        async function updateSong(id, field, value) {
+            const data = {};
+            data[field] = value;
+            await fetch(`/api/songs/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+        }
+
+        async function deleteSong(id) {
+            await fetch(`/api/songs/${id}`, { method: 'DELETE' });
+            loadSongs();
+        }
+
+        async function logout() {
+            await fetch('/logout', { method: 'POST' });
+            window.location.href = '/login';
+        }
+
+        loadSongs();
+    </script>
+</body>
+</html>
