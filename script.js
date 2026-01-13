@@ -31,6 +31,7 @@ function addToHistory(song) {
         const songId = parseInt(this.dataset.songId);
         const selectedSong = songs.find(s => s.id === songId);
         if (selectedSong) {
+            currentSong = selectedSong;
             updateEmbed(selectedSong);
         }
     });
