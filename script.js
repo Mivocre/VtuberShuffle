@@ -15,11 +15,17 @@ function updateEmbed(song) {
         document.getElementById('videoEmbed').src = `https://www.youtube.com/embed/${videoId}`;
     }
     updateNowPlaying(song);
+    updateProfile(song);
 }
 
 function updateNowPlaying(song) {
     const affiliation = song.affiliation ? ` (${song.affiliation})` : '';
     document.getElementById('now-playing').textContent = `Now playing: ${song.title} by ${song.artist}${affiliation}`;
+}
+
+function updateProfile(song) {
+    document.getElementById('artist-name').textContent = song.artist;
+    document.getElementById('artist-affiliation').textContent = song.affiliation || '';
 }
 
 function addToHistory(song) {
