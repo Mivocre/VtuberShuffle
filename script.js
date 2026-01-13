@@ -14,6 +14,11 @@ function updateEmbed(song) {
     if (videoId) {
         document.getElementById('videoEmbed').src = `https://www.youtube.com/embed/${videoId}`;
     }
+    updateNowPlaying(song);
+}
+
+function updateNowPlaying(song) {
+    document.getElementById('now-playing').textContent = `Now playing: ${song.title}`;
 }
 
 function addToHistory(song) {
