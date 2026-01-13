@@ -26,9 +26,35 @@ function updateNowPlaying(song) {
 }
 
 function updateProfile(song) {
-    const firstArtist = song.artists[0];
-    document.getElementById('artist-name').textContent = firstArtist ? firstArtist.name : '';
-    document.getElementById('artist-affiliation').textContent = firstArtist ? firstArtist.affiliation || '' : '';
+    const artistsList = document.getElementById('artists-list');
+    artistsList.innerHTML = '';
+    
+    if (song.artists && song.artists.length > 0) {
+        song.artists.forEach((artist, index) => {
+            const artistDiv = document.createElement('div');
+            artistDiv.className = 'artist-entry';
+            
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'name';
+            nameDiv.textContent = `Name: ${artist.name}`;
+            
+            const affiliationDiv = document.createElement('div');
+            affiliationDiv.className = 'affiliation';
+            affiliationDiv.textContent = `Affiliation: ${artist.affiliation || ''}`;
+            
+            artistDiv.appendChild(nameDiv);
+            artistDiv.appendChild(affiliationDiv);
+            
+            artistsList.appendChild(artistDiv);
+            
+            // Add separator line between artists (except after the last one)
+            if (index < song.artists.length - 1) {
+                const separator = document.createElement('hr');
+                separator.className = 'artist-separator';
+                artistsList.appendChild(separator);
+            }
+        });
+    }
 }
 
 function addToHistory(song) {
