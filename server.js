@@ -45,29 +45,6 @@ db.serialize(() => {
     if (err) console.error(err);
     db.run(`INSERT OR IGNORE INTO users (username, password_hash) VALUES (?, ?)`, ['admin', hash]);
   });
-
-  // Insert sample data
-  // Sample artists
-  db.run(`INSERT OR IGNORE INTO artists (name, affiliation) VALUES (?, ?)`, ['Artist1', 'Group1']);
-  db.run(`INSERT OR IGNORE INTO artists (name, affiliation) VALUES (?, ?)`, ['Artist2', 'Group2']);
-
-  // Sample songs
-  db.run(`INSERT OR IGNORE INTO songs (title, url) VALUES (?, ?)`, ['Song1', 'https://www.youtube.com/watch?v=6sAQ1wuYzxk'], function(err) {
-    if (!err && this.lastID) {
-      db.run(`INSERT OR IGNORE INTO song_artists (song_id, artist_id) VALUES (?, ?)`, [this.lastID, 1]);
-    }
-  });
-  db.run(`INSERT OR IGNORE INTO songs (title, url) VALUES (?, ?)`, ['Song2', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'], function(err) {
-    if (!err && this.lastID) {
-      db.run(`INSERT OR IGNORE INTO song_artists (song_id, artist_id) VALUES (?, ?)`, [this.lastID, 2]);
-    }
-  });
-  db.run(`INSERT OR IGNORE INTO songs (title, url) VALUES (?, ?)`, ['Song3', 'https://www.youtube.com/watch?v=jNQXAC9IVRw'], function(err) {
-    if (!err && this.lastID) {
-      db.run(`INSERT OR IGNORE INTO song_artists (song_id, artist_id) VALUES (?, ?)`, [this.lastID, 1]);
-      db.run(`INSERT OR IGNORE INTO song_artists (song_id, artist_id) VALUES (?, ?)`, [this.lastID, 2]);
-    }
-  });
 });
 
 // Middleware
