@@ -27,6 +27,13 @@ db.serialize(() => {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
+  // Add affiliation column if not exists
+  db.run(`ALTER TABLE songs ADD COLUMN affiliation TEXT`, (err) => {
+    if (err && !err.message.includes('duplicate column name')) {
+      console.error('Error adding affiliation column:', err);
+    }
+  });
+
   // Insert default admin user if not exists
   const saltRounds = 10;
   bcrypt.hash('admin123', saltRounds, (err, hash) => {
@@ -116,16 +123,16 @@ app.use('/api', (req, res, next) => {
 });
 
 app.post('/api/songs', (req, res) => {
-  const { title, artist, url } = req.body;
-  db.run(`INSERT INTO songs (title, artist, url) VALUES (?, ?, ?)`, [title, artist, url], function(err) {
+  const { title, artist, url, affiliation } = req.body;
+  db.run(`INSERT INTO songs (title, artist, url, affiliation) VALUES (?, ?, ?, ?)`, [title, artist, url, affiliation], function(err) {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ id: this.lastID });
   });
 });
 
 app.put('/api/songs/:id', (req, res) => {
-  const { title, artist, url } = req.body;
-  db.run(`UPDATE songs SET title = ?, artist = ?, url = ? WHERE id = ?`, [title, artist, url, req.params.id], function(err) {
+  const { title, artist, url, affiliation } = req.body;
+  db.run(`UPDATE songs SET title = ?, artist = ?, url = ?, affiliation = ? WHERE id = ?`, [title, artist, url, affiliation, req.params.id], function(err) {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ changes: this.changes });
   });

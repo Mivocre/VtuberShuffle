@@ -64,6 +64,7 @@
         <input type="text" id="title" placeholder="Title" required>
         <input type="text" id="artist" placeholder="Artist" required>
         <input type="text" id="url" placeholder="URL" required>
+        <input type="text" id="affiliation" placeholder="Affiliation">
         <button onclick="addSong()">Add Song</button>
     </div>
 
@@ -74,6 +75,7 @@
                 <th>ID</th>
                 <th>Title</th>
                 <th>Artist</th>
+                <th>Affiliation</th>
                 <th>URL</th>
                 <th>Actions</th>
             </tr>
@@ -93,6 +95,7 @@
                     <td>${song.id}</td>
                     <td><input type="text" value="${song.title}" onchange="updateSong(${song.id}, 'title', this.value)"></td>
                     <td><input type="text" value="${song.artist}" onchange="updateSong(${song.id}, 'artist', this.value)"></td>
+                    <td><input type="text" value="${song.affiliation || ''}" onchange="updateSong(${song.id}, 'affiliation', this.value)"></td>
                     <td><input type="text" value="${song.url}" onchange="updateSong(${song.id}, 'url', this.value)"></td>
                     <td><button onclick="deleteSong(${song.id})">Delete</button></td>
                 `;
@@ -103,15 +106,17 @@
             const title = document.getElementById('title').value;
             const artist = document.getElementById('artist').value;
             const url = document.getElementById('url').value;
+            const affiliation = document.getElementById('affiliation').value;
             await fetch('/api/songs', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, artist, url })
+                body: JSON.stringify({ title, artist, url, affiliation })
             });
             loadSongs();
             document.getElementById('title').value = '';
             document.getElementById('artist').value = '';
             document.getElementById('url').value = '';
+            document.getElementById('affiliation').value = '';
         }
 
         async function updateSong(id, field, value) {

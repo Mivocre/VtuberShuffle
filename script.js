@@ -18,13 +18,15 @@ function updateEmbed(song) {
 }
 
 function updateNowPlaying(song) {
-    document.getElementById('now-playing').textContent = `Now playing: ${song.title}`;
+    const affiliation = song.affiliation ? ` (${song.affiliation})` : '';
+    document.getElementById('now-playing').textContent = `Now playing: ${song.title} by ${song.artist}${affiliation}`;
 }
 
 function addToHistory(song) {
     const historyList = document.getElementById('history-list');
     const li = document.createElement('li');
-    li.textContent = `${song.title} by ${song.artist}`;
+    const affiliation = song.affiliation ? ` (${song.affiliation})` : '';
+    li.textContent = `${song.title} by ${song.artist}${affiliation}`;
     li.style.cursor = 'pointer';
     li.dataset.songId = song.id;
     li.addEventListener('click', function() {
