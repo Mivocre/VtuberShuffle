@@ -65,3 +65,12 @@ iframe {
         order: 3;
     }
 }
+
+#history-list li {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+#history-list li:hover {
+    color: #0056b3;
+}

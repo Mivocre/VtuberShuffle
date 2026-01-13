@@ -20,6 +20,15 @@ function addToHistory(song) {
     const historyList = document.getElementById('history-list');
     const li = document.createElement('li');
     li.textContent = `${song.title} by ${song.artist}`;
+    li.style.cursor = 'pointer';
+    li.dataset.songId = song.id;
+    li.addEventListener('click', function() {
+        const songId = parseInt(this.dataset.songId);
+        const selectedSong = songs.find(s => s.id === songId);
+        if (selectedSong) {
+            updateEmbed(selectedSong);
+        }
+    });
     historyList.appendChild(li);
 }
 
