@@ -19,20 +19,25 @@ function updateEmbed(song) {
 }
 
 function updateNowPlaying(song) {
-    const affiliation = song.affiliation ? ` (${song.affiliation})` : '';
-    document.getElementById('now-playing').textContent = `Now playing: ${song.title} by ${song.artist}${affiliation}`;
+    const artists = song.artists.map(a => a.name).join(', ');
+    const affiliations = [...new Set(song.artists.map(a => a.affiliation).filter(a => a))].join(', ');
+    const affiliationText = affiliations ? ` (${affiliations})` : '';
+    document.getElementById('now-playing').textContent = `Now playing: ${song.title} by ${artists}${affiliationText}`;
 }
 
 function updateProfile(song) {
-    document.getElementById('artist-name').textContent = song.artist;
-    document.getElementById('artist-affiliation').textContent = song.affiliation || '';
+    const firstArtist = song.artists[0];
+    document.getElementById('artist-name').textContent = firstArtist ? firstArtist.name : '';
+    document.getElementById('artist-affiliation').textContent = firstArtist ? firstArtist.affiliation || '' : '';
 }
 
 function addToHistory(song) {
     const historyList = document.getElementById('history-list');
     const li = document.createElement('li');
-    const affiliation = song.affiliation ? ` (${song.affiliation})` : '';
-    li.textContent = `${song.title} by ${song.artist}${affiliation}`;
+    const artists = song.artists.map(a => a.name).join(', ');
+    const affiliations = [...new Set(song.artists.map(a => a.affiliation).filter(a => a))].join(', ');
+    const affiliationText = affiliations ? ` (${affiliations})` : '';
+    li.textContent = `${song.title} by ${artists}${affiliationText}`;
     li.style.cursor = 'pointer';
     li.dataset.songId = song.id;
     li.addEventListener('click', function() {
