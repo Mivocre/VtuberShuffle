@@ -40,6 +40,29 @@
         button:hover {
             background-color: #555;
         }
+        .update-btn {
+            background-color: blue;
+            color: white;
+            margin-right: 5px;
+        }
+        .update-btn:hover {
+            background-color: darkblue;
+        }
+        .delete-btn {
+            background-color: red;
+            color: white;
+            margin-left: 5px;
+        }
+        .delete-btn:hover {
+            background-color: darkred;
+        }
+        .add-btn {
+            background-color: green;
+            color: white;
+        }
+        .add-btn:hover {
+            background-color: darkgreen;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -65,7 +88,7 @@
         <input type="text" id="artist" placeholder="Artist" required>
         <input type="text" id="url" placeholder="URL" required>
         <input type="text" id="affiliation" placeholder="Affiliation">
-        <button onclick="addSong()">Add Song</button>
+        <button class="add-btn" onclick="addSong()">Add Song</button>
     </div>
 
     <h2>Songs List</h2>
@@ -93,11 +116,11 @@
                 const row = tbody.insertRow();
                 row.innerHTML = `
                     <td>${song.id}</td>
-                    <td><input type="text" value="${song.title}" onchange="updateSong(${song.id}, 'title', this.value)"></td>
-                    <td><input type="text" value="${song.artist}" onchange="updateSong(${song.id}, 'artist', this.value)"></td>
-                    <td><input type="text" value="${song.affiliation || ''}" onchange="updateSong(${song.id}, 'affiliation', this.value)"></td>
-                    <td><input type="text" value="${song.url}" onchange="updateSong(${song.id}, 'url', this.value)"></td>
-                    <td><button onclick="deleteSong(${song.id})">Delete</button></td>
+                    <td><input type="text" value="${song.title}" id="title-${song.id}"></td>
+                    <td><input type="text" value="${song.artist}" id="artist-${song.id}"></td>
+                    <td><input type="text" value="${song.affiliation || ''}" id="affiliation-${song.id}"></td>
+                    <td><input type="text" value="${song.url}" id="url-${song.id}"></td>
+                    <td><button class="update-btn" onclick="updateSong(${song.id})">Update</button><button class="delete-btn" onclick="deleteSong(${song.id})">Delete</button></td>
                 `;
             });
         }
@@ -119,14 +142,17 @@
             document.getElementById('affiliation').value = '';
         }
 
-        async function updateSong(id, field, value) {
-            const data = {};
-            data[field] = value;
+        async function updateSong(id) {
+            const title = document.getElementById(`title-${id}`).value;
+            const artist = document.getElementById(`artist-${id}`).value;
+            const affiliation = document.getElementById(`affiliation-${id}`).value;
+            const url = document.getElementById(`url-${id}`).value;
             await fetch(`/api/songs/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                body: JSON.stringify({ title, artist, affiliation, url })
             });
+            // Optionally reload or show success
         }
 
         async function deleteSong(id) {
